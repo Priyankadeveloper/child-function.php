@@ -1,0 +1,64 @@
+<?php 
+/* Template Name: press */
+//include ('include/header.php')
+ get_header(); 
+?>
+<div class="static-top">
+	<h1><?php the_title(); ?></h1>
+</div>
+
+<div class="press-page">
+	<div class="container">
+		<div class="press-main">
+		<!--  box -->
+		
+			<?php 
+					// the query
+					//$wpb_all_query = new WP_Query(array('post_type'=>'post', 'post_status'=>'publish', 'posts_per_page'=>-1)); 
+
+					 $fetch_user = $wpdb->get_results("select * from wp_press_released where pr_status='1'");
+
+			$i=1; foreach ($fetch_user as $x){?>
+			<div class="press-box">
+
+				<!--<a href="<?php the_permalink(); ?>">-->
+					<a target="_blank" href="../detail?id=<?php echo $x->pr_id;?> ">
+				<div class="press-img">
+				<img src="<?php echo $x->pr_pri_img;?>">
+					
+				</div>
+				</a>
+				<div class="press-text">
+			
+			
+				<a target="_blank" href="../detail?id=<?php echo $x->pr_id;?> "><h1><?php echo $x->pr_tittle;?></h1>
+				<p><?php 
+				$string=$x->pr_release_des;
+								 echo substr($string, 0, 200).'...';
+
+				//echo wp_trim_words( get_the_content(), 60, '' ); ?></p><h4><i class="fa fa-calendar"></i> <span class="entry-date"><?php echo $x->pr_update; ?></span></h4></i></a>
+				</div>
+				</a>
+			</div>
+		
+			
+		
+			<?php }; ?>
+					<!-- end of the loop -->
+
+					
+
+					<?php //wp_reset_postdata(); ?>
+				
+
+					<?php //else : ?>
+					<p><?php //_e( 'Sorry, no posts matched your criteria.' ); ?></p>
+					<?php //endif; ?>
+					</div>
+	</div>
+</div>
+<!-- partners -->
+<?php 
+get_footer();
+//include ('include/footer.php')
+?>
