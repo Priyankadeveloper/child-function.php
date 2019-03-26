@@ -1,0 +1,349 @@
+<?php 
+  /*
+   Template Name: edit post*/
+   get_header(); 
+   if ( !is_user_logged_in() ) {
+  	echo "<script>window.location = 'login'</script>";
+  }
+   $user = wp_get_current_user(); 
+    $user_id = $user->ID;
+   ?>
+<div class="user-profile">
+  <div class="container">
+    <div class="row">
+      <!--tab start here-->
+      <div class="user-detail-edit">
+        <section>
+          <div class="">
+            <div class="col-sm-3">
+              <div class="left-side-profile">
+                <?php include ('include/sidebar.php') ?>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-9">
+            <div class="right-side-user">
+              <h2>Update My Press</h2>
+              <!--   Update your profile-->                           
+              <div class="set-box">
+                <div class="row">
+                  <div class="col-sm-12">
+                    <div class="Press_ooo1">
+                      <?php //echo do_shortcode('[frontier-post frontier_parent_cat_id=7 frontier_custom_tax="group,article-type" frontier_custom_tax_layout="readonly,checkbox"]');
+                        ?> 
+                      <!--add new--->
+                      <!--<form onsubmit="return add_form();" id="add_form">--> 
+                      <form method="post" action="../process.php?action=edit_post" enctype="multipart/form-data">
+                        <?php  $data = $wpdb->get_results("select * from wp_press_released where pr_id='".$_GET['id']."'");
+                          $x = $data[0];
+                          if($x->pr_user_id != $user_id)
+                          {
+                          echo "<script>window.location = '".get_home_url()."'</script>";
+                          
+                          }
+                          
+                          ?>
+                        <div class="form-group">
+                          <label for="pre_t" class="col-md-3 col-sm-4 col-xs-12 control-label">Press Release Title:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" class="form-control" value="<?php echo $x->pr_tittle;?>" name="pre_t" required>
+                            <input type="hidden" value="<?php echo $x->pr_id;?>" name="press_id">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Custom Title For Twitter:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" class="form-control" name="cus_t" required value="<?php echo $x->pr_t_t;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Press Release subtitle/Summary:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" class="form-control" value="<?php echo $x->pr_subtitle;?>" name="sub_ti" required>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-xs-12 control-label" style="font-size: 15px; color:#000;">Location:</label>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">City:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" value="<?php echo $x->pr_city;?>"  class="form-control" name="city" required>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">State/Province:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" value="<?php echo $x->pr_state;?>" class="form-control" name="state" required>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Country:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" value="<?php echo $x->pr_country;?>" class="form-control" name="cnty" required>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label" style="font-size: 15px; color:#000;">Release Date:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="hidden" name="user_id" value="<?php echo $user_id;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Choose Your Time Zone:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <select name="time_z" class="form-control">
+                              
+                              <?php
+                                $countries = $wpdb->get_results("select * from wp_country order by name asc");
+                                foreach($countries as $country) {
+																$selected = ($country->id==$x->pr_time_zone)?'selected':'';
+                                ?>
+                              <option <?= $selected; ?> value="<?= $country->id; ?>"><?= '('.$country->UTC_offset .') '.$country->nicename; ?></option>
+                              <?php } ?>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">
+                          <input type="radio" name="im_re" value="immediate Release" <?= ($x->im_re==1)?'checked':''; ?> > For immediate Release	 
+                         </label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="date" name="im_re_date" required value="<?php echo $x->pr_im_r_d;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">
+                          <input type="radio" name="im_re" value="Shedule Press" <?= ($x->im_re==2)?'checked':''; ?> > Schedule Press Release for
+                          </label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <div class="row margin_1set">
+                              <div class="col-sm-6"><input type="date" class="form-control" name="shedu_press_re" value="<?php echo $x->pr_s_p_r;?>"></div>
+                              <div class="col-sm-6"><input type="time" class="form-control" id="appt" name="appt"
+                                min="9:00" max="18:00"  value="<?php echo $x->pr_shedule_time;?>"></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-sm-9 col-xs-12 control-label">Press Release Body/Text</label>
+                          <div class="col-sm-9 col-xs-12">
+                            <textarea name="press_r_t" class="form-control"><?php echo $x->pr_release_des;?></textarea>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Embedded Quote(optional)</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" class="form-control" name="enbed_quote" value="<?php echo $x->pr_quote;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Authore of the code:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" class="form-control" name="autor_code" value="<?php echo $x->pr_authore_quote;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-sm-9 col-xs-12 control-label" style="font-size: 15px; color:#000;">Embedded Images(optional)</label>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Primary Image:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="file" class="form-control file_upload" name="enbed_img_1" value="<?php echo $x->pr_pri_img;?>">
+                            <img width="50" height="50" src="<?php echo $x->pr_pri_img;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Image #2:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="file" class="form-control file_upload" name="enbed_img_2"  value="<?php echo $x->pr_img_sec;?>">
+                            <img width="50" height="50" src="<?php echo $x->pr_img_sec;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Image #3:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="file" class="form-control file_upload" name="enbed_img_3" value="<?php echo $x->pr_img_third;?>">
+                            <img width="50" height="50" src="<?php echo $x->pr_img_third;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-sm-9 col-xs-12 control-label" style="font-size: 15px; color:#000;">Embedded video(optional)</label>
+                        </div>
+                 
+                        <div class="form-group">
+                          <label class="col-md-3 col-sm-4 col-xs-12 control-label">video Title</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" class="form-control" name="embed_video_t" value="<?php echo $x->pr_video_title;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-md-3 col-sm-4 col-xs-12 control-label">Embedded Website(optional)</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="url" class="form-control" name="embed_website" value="<?php echo $x->pr_embed_website;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-sm-9 col-xs-12 control-label" style="font-size: 15px; color:#000;">Keyword Anchor Text Links</label>
+                        </div>
+                        <div class="form-group">
+                          <div class="row" style="margin: 0;">
+                            <div class="col-sm-9 space_m">
+                              <div class="row margin_1set">
+                                <div class="col-sm-6">
+                                  <div class="postion_Keyword">
+                                    <span>Keyword #1:</span>
+                                    <input type="text" class="form-control" name="key_text" required value="<?php echo $x->pr_keyword_f;?>">
+                                  </div>
+                                </div>
+                                <div class="col-sm-6">
+                                  <div class="postion_Keyword postion_Keyword2">
+                                    <span>URL:</span>
+                                    <input type="url" class="form-control" name="key_1" required value="<?php echo $x->pr_keyword1_url;?>">
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row margin_1set">
+                                <div class="col-sm-6">
+                                  <div class="postion_Keyword">
+                                    <span>Keyword #2:</span>
+                                    <input type="text" class="form-control" name="key_text_2" required value="<?php echo $x->pr_keyword_s;?>">
+                                  </div>
+                                </div>
+                                <div class="col-sm-6">
+                                  <div class="postion_Keyword postion_Keyword2">
+                                    <span>URL:</span>
+                                    <input type="url" class="form-control" name="key_2" required  value="<?php echo $x->pr_keyword2_url;?>">
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row margin_1set">
+                                <div class="col-sm-6">
+                                  <div class="postion_Keyword">
+                                    <span>Keyword #3:</span>
+                                    <input type="text" class="form-control" name="key_text_3" required value="<?php echo $x->pr_keyword_t;?>">
+                                  </div>
+                                </div>
+                                <div class="col-sm-6">
+                                  <div class="postion_Keyword postion_Keyword2">
+                                    <span>URL:</span>
+                                    <input type="url" class="form-control" name="key_3" required value="<?php echo $x->pr_keyword3_url;?>">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-sm-9 col-xs-12 control-label" style="font-size: 15px; color:#000;">Contact Information</label>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Full Name:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" class="form-control" name="ful_name" required value="<?php echo $x->pr_full_name;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Organization Name:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" class="form-control" name="org_name" required value="<?php echo $x->pr_organization_nam;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">phone:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" class="form-control" name="phone" value="<?php echo $x->pr_phone;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Email Address:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="email" class="form-control" name="email" required value="<?php echo $x->pr_email;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Facebook Page Url:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="url" class="form-control" name="fac_u" required value="<?php echo $x->pr_fb_url;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Twitter Page Url:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="url" class="form-control" name="twi_u" required value="<?php echo $x->pr_twitter_url;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Google+ Page Url:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="url" class="form-control" name="goo_u" required value="<?php echo $x->pr_twitter_gplus;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Linkedin Page Url:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="url" class="form-control" name="link_u" required value="<?php echo $x->pr_twitter_linkid;?>">
+                          </div>
+                        </div>
+                      
+                        <div class="form-group">
+                          <label for="" class="col-sm-12 col-xs-12" style="font-size: 15px; color:#000;">Enter your Company name,the exchange and the stock symbol(optional:Maximum 200 character)</label>
+                          <div >
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Company Name:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" class="form-control" name="com_name" required value="<?php echo $x->pr_companynam;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Exchange:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" class="form-control" name="exc" required value="<?php echo $x->pr_exchange;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">stock/Ticker Symbol:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" class="form-control" name="stotri" required value="<?php echo $x->pr_stock_symbol;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-sm-12 col-xs-12" style="font-size: 15px; color:#000;">Embedded Quote(optional:Maximum 200 character for text and 75 for authore)Enter the text of the quote withoutquotation marks</label>
+                          <div >
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Embedded Quote</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" class="form-control" name="embed_c" required value="<?php echo $x->pr_cmp_embedded;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label">Authore of the Quote:</label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <input type="text" class="form-control" name="authore_c" required value="<?php echo $x->pr_cmp_authore;?>">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="" class="col-md-3 col-sm-4 col-xs-12 control-label"></label>
+                          <div class="col-md-6 col-sm-8 col-xs-12">
+                            <button type="submit" name="submit" value="submit" class="btn btn-info">Update</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+				</section>
+      </div>
+		</div>
+  </div>
+  <!--tab end here--> 
+</div>
+
+<?php get_footer(); 
+  ?>
